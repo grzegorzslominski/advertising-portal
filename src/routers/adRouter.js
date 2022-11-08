@@ -6,7 +6,7 @@ const {
   createAd,
   updateAd,
   deleteAd,
-} = require("../controllers/adController");
+} = require("../controllers/ad.controller");
 
 router.get("/", getAds);
 

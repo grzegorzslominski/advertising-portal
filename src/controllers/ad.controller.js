@@ -4,10 +4,9 @@ const {
   createAdDatastore,
   updateAdDatastore,
   deleteAdDatastore,
-} = require("../services/ad/ad.db");
+} = require("../services/ad/ad");
 
 const getAds = async (req, res) => {
-  console.log(req.query.name);
   try {
     const adName = req.query.name;
     if (adName) {
@@ -15,7 +14,8 @@ const getAds = async (req, res) => {
       res.json(data);
       res.status(200);
     } else {
-      const data = await getAdsDatastore();
+      const pageCursor = req.query.pageCursor;
+      const data = await getAdsDatastore(pageCursor);
       res.json(data);
       res.status(200);
     }
@@ -27,7 +27,7 @@ const getAds = async (req, res) => {
 
 const createAd = async (req, res) => {
   try {
-    const data = await createAdDatastore(req.body);
+    await createAdDatastore(req.body);
     res.status(201);
     res.send("New ad was created");
   } catch (error) {

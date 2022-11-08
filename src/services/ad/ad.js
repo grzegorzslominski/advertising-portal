@@ -1,8 +1,13 @@
 const { datastore } = require("../../config/database/datastore");
 
-async function getAdsDatastore() {
-  const query = datastore.createQuery("Ad");
-  const [ads] = await datastore
+async function getAdsDatastore(pageCursor) {
+  let query = datastore.createQuery("Ad").limit(2);
+
+  if (pageCursor) {
+    const pageCursorWithSpecialChar = pageCursor.replaceAll(" ", "+");
+    query = query.start(pageCursorWithSpecialChar);
+  }
+  const results = await datastore
     .runQuery(query)
     .then((result) => {
       return result;
@@ -11,7 +16,21 @@ async function getAdsDatastore() {
       return err;
     });
 
-  return ads;
+  console.log(results[0]);
+
+  const entities = results[0];
+  const info = results[1];
+
+  let dataToSend = {
+    ads: entities,
+    endCursor: null,
+  };
+
+  if (info.moreResults !== datastore.NO_MORE_RESULTS) {
+    dataToSend = { ...dataToSend, ads: entities, endCursor: info.endCursor };
+  }
+
+  return dataToSend;
 }
 
 async function getAdByNameDatastore(adName) {
