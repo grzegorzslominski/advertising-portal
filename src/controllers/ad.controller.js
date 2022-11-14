@@ -8,19 +8,23 @@ const {
 
 const getAds = async (req, res) => {
   try {
-    const adName = req.query.name;
-    if (adName) {
-      const data = await getAdByNameDatastore(adName);
-      res.json(data);
-      res.status(200);
-    } else {
-      const pageCursor = req.query.pageCursor;
-      const data = await getAdsDatastore(pageCursor);
-      res.json(data);
-      res.status(200);
-    }
+    const pageCursor = req.query.pageCursor;
+    const data = await getAdsDatastore(pageCursor);
+    res.json(data);
+    res.status(200);
   } catch (error) {
     res.json("Error while downloading the advertisements");
+    res.status(500);
+  }
+};
+
+const getAdByName = async (req, res) => {
+  try {
+    const data = await getAdByNameDatastore(req.params.name);
+    res.json(data);
+    res.status(200);
+  } catch (error) {
+    res.json("Error while downloading the advertisement");
     res.status(500);
   }
 };
@@ -37,9 +41,8 @@ const createAd = async (req, res) => {
 };
 
 const updateAd = async (req, res) => {
-  const adName = req.query.name;
   try {
-    await updateAdDatastore({ name: adName, data: req.body });
+    await updateAdDatastore({ name: req.params.name, data: req.body });
     res.status(200);
     res.send("Ad was updated");
   } catch (error) {
@@ -49,9 +52,8 @@ const updateAd = async (req, res) => {
 };
 
 const deleteAd = async (req, res) => {
-  const adName = req.query.name;
   try {
-    await deleteAdDatastore(adName);
+    await deleteAdDatastore(req.params.name);
     res.status(200);
     res.send("Ad was deleted");
   } catch (error) {
@@ -60,4 +62,4 @@ const deleteAd = async (req, res) => {
   }
 };
 
-module.exports = { getAds, createAd, updateAd, deleteAd };
+module.exports = { getAds, getAdByName, createAd, updateAd, deleteAd };

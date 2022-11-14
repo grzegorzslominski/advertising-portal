@@ -14,7 +14,7 @@ const app = express();
 app.use(cors(corsOptions));
 app.use(bodyParser.json());
 
-app.use("/", adRoutes);
+app.use("/ad", adRoutes);
 app.use("/image", uploadRoutes);
 
 const PORT = process.env.PORT || 8080;

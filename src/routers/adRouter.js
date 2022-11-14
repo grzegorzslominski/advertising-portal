@@ -3,17 +3,20 @@ router = express.Router();
 
 const {
   getAds,
+  getAdByName,
   createAd,
   updateAd,
   deleteAd,
 } = require("../controllers/ad.controller");
 
-router.get("/", getAds);
+router.get("/ads/", getAds);
 
-router.post("/", createAd);
+router.get("/ads/:name", getAdByName);
 
-router.patch("/", updateAd);
+router.post("/create", createAd);
 
-router.delete("/", deleteAd);
+router.patch("/update/:name", updateAd);
+
+router.delete("/remove/:name", deleteAd);
 
 module.exports = router;

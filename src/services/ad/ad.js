@@ -1,7 +1,11 @@
+const moment = require("moment");
 const { datastore } = require("../../config/database/datastore");
 
 async function getAdsDatastore(pageCursor) {
-  let query = datastore.createQuery("Ad").limit(2);
+  let query = datastore
+    .createQuery("Ad")
+    .limit(5)
+    .order("creationData", { descending: true });
 
   if (pageCursor) {
     const pageCursorWithSpecialChar = pageCursor.replaceAll(" ", "+");
@@ -15,8 +19,6 @@ async function getAdsDatastore(pageCursor) {
     .catch((err) => {
       return err;
     });
-
-  console.log(results[0]);
 
   const entities = results[0];
   const info = results[1];
@@ -57,6 +59,7 @@ async function createAdDatastore(adData) {
       description: adData.description,
       author: adData.author,
       price: adData.price,
+      creationData: moment.utc().format("YYYY-MM-DD HH:mm:ss"),
     },
   };
 

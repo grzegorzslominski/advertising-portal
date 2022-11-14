@@ -10,7 +10,7 @@ const upload = async (req, res) => {
       return res.status(400).send({ message: "Please upload a file!" });
     }
 
-    const blob = bucket.file(req.file.originalname);
+    const blob = await bucket.file(req.file.originalname);
     const blobStream = blob.createWriteStream({
       resumable: false,
     });
@@ -25,7 +25,8 @@ const upload = async (req, res) => {
       );
 
       try {
-        await bucket.file(req.file.originalname).makePublic();
+        //  await bucket.file(req.file.originalname).makePublic();
+        bucket.file(req.file.originalname);
       } catch {
         return res.status(500).send({
           message: `Uploaded the file successfully: ${req.file.originalname}, but public access is denied!`,
