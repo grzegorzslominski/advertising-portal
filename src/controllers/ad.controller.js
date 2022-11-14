@@ -6,6 +6,8 @@ const {
   deleteAdDatastore,
 } = require("../services/ad/ad");
 
+const { translateText } = require("../services/ad/translateService");
+
 const getAds = async (req, res) => {
   try {
     const pageCursor = req.query.pageCursor;
@@ -34,6 +36,8 @@ const createAd = async (req, res) => {
     await createAdDatastore(req.body);
     res.status(201);
     res.send("New ad was created");
+
+    const translatedText = await translateText(req.body.description, "pl");
   } catch (error) {
     res.send("New advertisement could not be added");
     res.status(500);
