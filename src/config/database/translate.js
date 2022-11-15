@@ -2,4 +2,6 @@ const { Translate } = require("@google-cloud/translate").v2;
 
 const translate = new Translate();
 
-module.exports = { translate };
+const targetLanguages = ["en", "cs", "de"];
+
+module.exports = { translate, targetLanguages };

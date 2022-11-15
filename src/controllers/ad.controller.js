@@ -8,6 +8,8 @@ const {
 
 const { translateText } = require("../services/ad/translateService");
 
+const { targetLanguages } = require("../config/database/translate");
+
 const getAds = async (req, res) => {
   try {
     const pageCursor = req.query.pageCursor;
@@ -36,11 +38,24 @@ const createAd = async (req, res) => {
     await createAdDatastore(req.body);
     res.status(201);
     res.send("New ad was created");
-
-    const translatedText = await translateText(req.body.description, "pl");
   } catch (error) {
     res.send("New advertisement could not be added");
     res.status(500);
+  }
+
+  const translatedText = await translateText(
+    req.body.description,
+    targetLanguages
+  );
+  if (translatedText) {
+    try {
+      await updateAdDatastore({
+        name: req.body.name,
+        data: { translations: translatedText },
+      });
+    } catch (error) {
+      console.log(error);
+    }
   }
 };
 
