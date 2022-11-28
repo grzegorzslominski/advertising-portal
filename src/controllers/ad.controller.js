@@ -7,8 +7,9 @@ const {
 } = require("../services/ad/ad");
 
 const { translateText } = require("../services/ad/translateService");
-
 const { targetLanguages } = require("../config/database/translate");
+const { translateAdDescriptionTask } = require("../middleware/translateTask");
+const { updateAdAfterTranslate } = require("../middleware/updateAdTask");
 
 const getAds = async (req, res) => {
   try {
@@ -35,27 +36,32 @@ const getAdByName = async (req, res) => {
 
 const createAd = async (req, res) => {
   try {
-    await createAdDatastore(req.body);
-    res.status(201);
-    res.send("New ad was created");
+    const [createResult, translationResult] = await Promise.all([
+      createAdDatastore(req.body),
+      translateAdDescriptionTask(req.body.description),
+    ]);
+
+    if (translationResult) {
+      try {
+        await updateAdAfterTranslate({
+          name: req.body.name,
+          data: translationResult,
+        });
+        res.send("Created ad with translations");
+        res.status(201);
+      } catch (error) {
+        console.log(error);
+        res.send("Created ad without translations");
+        res.status(201);
+      }
+    } else {
+      res.send("Created ad without translations");
+      res.status(201);
+    }
   } catch (error) {
+    console.log(error);
     res.send("New advertisement could not be added");
     res.status(500);
-  }
-
-  const translatedText = await translateText(
-    req.body.description,
-    targetLanguages
-  );
-  if (translatedText) {
-    try {
-      await updateAdDatastore({
-        name: req.body.name,
-        data: { translations: translatedText },
-      });
-    } catch (error) {
-      console.log(error);
-    }
   }
 };
 
@@ -81,4 +87,25 @@ const deleteAd = async (req, res) => {
   }
 };
 
-module.exports = { getAds, getAdByName, createAd, updateAd, deleteAd };
+const translateDescription = async (req, res) => {
+  try {
+    const translatedText = await translateText(
+      req.body.textToTranslate,
+      targetLanguages
+    );
+    res.status(200);
+    res.json(translatedText);
+  } catch (error) {
+    res.send("Failed to translate text");
+    res.status(500);
+  }
+};
+
+module.exports = {
+  getAds,
+  getAdByName,
+  createAd,
+  updateAd,
+  deleteAd,
+  translateDescription,
+};

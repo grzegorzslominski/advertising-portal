@@ -7,6 +7,7 @@ const {
   createAd,
   updateAd,
   deleteAd,
+  translateDescription,
 } = require("../controllers/ad.controller");
 
 router.get("/ads/", getAds);
@@ -18,5 +19,7 @@ router.post("/create", createAd);
 router.patch("/update/:name", updateAd);
 
 router.delete("/remove/:name", deleteAd);
+
+router.post("/translate", translateDescription);
 
 module.exports = router;
