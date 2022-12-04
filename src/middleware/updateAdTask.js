@@ -17,16 +17,10 @@ async function updateAdAfterTranslate(payload) {
   };
 
   const requestBody = JSON.stringify({ translations: payload.data });
-
+  console.log(payload);
   if (requestBody) {
     task.appEngineHttpRequest.body =
       Buffer.from(requestBody).toString("base64");
-  }
-
-  if (inSeconds) {
-    task.scheduleTime = {
-      seconds: inSeconds + Date.now() / 1000,
-    };
   }
 
   const request = {
@@ -34,12 +28,12 @@ async function updateAdAfterTranslate(payload) {
     task: task,
   };
 
-  console.log("Sending task:");
-  console.log(task);
+  // console.log("Sending task:");
+  // console.log(task);
   // Send create task request.
   const [response] = await client.createTask(request);
   const name = response.name;
-  console.log(`Created task ${name}`);
+  // console.log(`Created task ${name}`);
 }
 
 module.exports = { updateAdAfterTranslate };

@@ -20,6 +20,6 @@ router.patch("/update/:name", updateAd);
 
 router.delete("/remove/:name", deleteAd);
 
-router.post("/translate", translateDescription);
+router.post("/translate/:adName", translateDescription);
 
 module.exports = router;

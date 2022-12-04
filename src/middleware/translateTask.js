@@ -3,45 +3,49 @@ const { CloudTasksClient } = require("@google-cloud/tasks");
 const client = new CloudTasksClient();
 
 async function translateAdDescriptionTask(payload) {
+
+
+  console.log('start translate task');
   const project = process.env.GCLOUD_PROJECT_ID;
   const queue = process.env.QUEUE;
   const location = process.env.LOCATION;
+  inSeconds = 2;
 
   const parent = client.queuePath(project, location, queue);
 
   const task = {
     appEngineHttpRequest: {
       httpMethod: "POST",
-      relativeUri: "/ad/translate",
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      relativeUri: `/ad/translate/${payload.adName}`
     },
   };
 
-  const requestBody = JSON.stringify({ textToTranslate: payload });
+  const requestBody = JSON.stringify({description: payload.description });
 
   if (payload) {
     task.appEngineHttpRequest.body =
       Buffer.from(requestBody).toString("base64");
   }
 
-  // if (inSeconds) {
-  //   task.scheduleTime = {
-  //     seconds: inSeconds + Date.now() / 1000,
-  //   };
-  // }
+  if (inSeconds) {
+    task.scheduleTime = {
+      seconds: 0,
+    };
+  }
 
-  const request = {
-    parent: parent,
-    task: task,
-  };
 
-  console.log("Sending task:");
-  console.log(task);
-  // Send create task request.
+
+
+  const request = {parent: parent, task: task};
   const [response] = await client.createTask(request);
-  const name = response.name;
-  console.log(`Created task ${name}`);
 
-  return response.JSON;
+  //return response;
+
 }
+
+
 
 module.exports = { translateAdDescriptionTask };

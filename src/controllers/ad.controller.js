@@ -36,28 +36,12 @@ const getAdByName = async (req, res) => {
 
 const createAd = async (req, res) => {
   try {
-    const [createResult, translationResult] = await Promise.all([
+    await Promise.all([
       createAdDatastore(req.body),
-      translateAdDescriptionTask(req.body.description),
+      translateAdDescriptionTask({adName: req.body.name, description:req.body.description}),
     ]);
-
-    if (translationResult) {
-      try {
-        await updateAdAfterTranslate({
-          name: req.body.name,
-          data: translationResult,
-        });
-        res.send("Created ad with translations");
-        res.status(201);
-      } catch (error) {
-        console.log(error);
-        res.send("Created ad without translations");
-        res.status(201);
-      }
-    } else {
-      res.send("Created ad without translations");
+      res.send("Created ad");
       res.status(201);
-    }
   } catch (error) {
     console.log(error);
     res.send("New advertisement could not be added");
@@ -88,11 +72,14 @@ const deleteAd = async (req, res) => {
 };
 
 const translateDescription = async (req, res) => {
+  
   try {
+    console.log(req.body);
     const translatedText = await translateText(
-      req.body.textToTranslate,
+      req.body.description,
       targetLanguages
     );
+    await updateAdDatastore({ name: req.params.adName, data: {translatedText : translatedText} });
     res.status(200);
     res.json(translatedText);
   } catch (error) {
