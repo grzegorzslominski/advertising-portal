@@ -2,11 +2,10 @@ const { CloudTasksClient } = require("@google-cloud/tasks");
 
 const client = new CloudTasksClient();
 
-async function translateAdDescriptionTask(payload) {
+async function recognizeImageLabelsTask(payload) {
   const project = process.env.GCLOUD_PROJECT_ID;
   const queue = process.env.QUEUE;
   const location = process.env.LOCATION;
-
   inSeconds = 1;
 
   const parent = client.queuePath(project, location, queue);
@@ -17,11 +16,11 @@ async function translateAdDescriptionTask(payload) {
       headers: {
         "Content-Type": "application/json",
       },
-      relativeUri: `/ad/translate/${payload.adName}`,
+      relativeUri: `/image/recognize/${payload.adName}`,
     },
   };
 
-  const requestBody = JSON.stringify({ description: payload.description });
+  const requestBody = JSON.stringify({ fileName: payload.fileName });
 
   if (payload) {
     task.appEngineHttpRequest.body =
@@ -38,4 +37,4 @@ async function translateAdDescriptionTask(payload) {
   client.createTask(request);
 }
 
-module.exports = { translateAdDescriptionTask };
+module.exports = { recognizeImageLabelsTask };

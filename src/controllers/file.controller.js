@@ -1,6 +1,13 @@
 const processFile = require("../middleware/upload");
 const { format } = require("util");
 const { bucket } = require("../config/database/storage");
+const {
+  recognizeImageLabels,
+} = require("../services/image/recognizeImageService");
+const {
+  recognizeImageLabelsTask,
+} = require("../middleware/recognizeImageTask");
+const { updateAdDatastore } = require("../services/ad/ad");
 
 const upload = async (req, res) => {
   try {
@@ -25,8 +32,11 @@ const upload = async (req, res) => {
       );
 
       try {
-        //  await bucket.file(req.file.originalname).makePublic();
         bucket.file(req.file.originalname);
+        recognizeImageLabelsTask({
+          adName: req.params.adName,
+          fileName: req.file.originalname,
+        });
       } catch {
         return res.status(500).send({
           message: `Uploaded the file successfully: ${req.file.originalname}, but public access is denied!`,
@@ -89,8 +99,26 @@ const download = async (req, res) => {
   }
 };
 
+const recognizeLabels = async (req, res) => {
+  try {
+    const labels = await recognizeImageLabels(req.body.fileName);
+    console.log(labels);
+    await updateAdDatastore({
+      name: req.params.adName,
+      data: { imageLabels: labels },
+    });
+    res.status(200);
+    res.send("Successfully added image labels");
+  } catch (err) {
+    res.status(500).send({
+      message: "Could not recognize labels from image. " + err,
+    });
+  }
+};
+
 module.exports = {
   upload,
   getListFiles,
   download,
+  recognizeLabels,
 };

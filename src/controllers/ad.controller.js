@@ -9,7 +9,6 @@ const {
 const { translateText } = require("../services/ad/translateService");
 const { targetLanguages } = require("../config/database/translate");
 const { translateAdDescriptionTask } = require("../middleware/translateTask");
-const { updateAdAfterTranslate } = require("../middleware/updateAdTask");
 
 const getAds = async (req, res) => {
   try {
@@ -38,10 +37,13 @@ const createAd = async (req, res) => {
   try {
     await Promise.all([
       createAdDatastore(req.body),
-      translateAdDescriptionTask({adName: req.body.name, description:req.body.description}),
+      translateAdDescriptionTask({
+        adName: req.body.name,
+        description: req.body.description,
+      }),
     ]);
-      res.send("Created ad");
-      res.status(201);
+    res.send("Created ad");
+    res.status(201);
   } catch (error) {
     console.log(error);
     res.send("New advertisement could not be added");
@@ -72,14 +74,15 @@ const deleteAd = async (req, res) => {
 };
 
 const translateDescription = async (req, res) => {
-  
   try {
-    console.log(req.body);
     const translatedText = await translateText(
       req.body.description,
       targetLanguages
     );
-    await updateAdDatastore({ name: req.params.adName, data: {translatedText : translatedText} });
+    await updateAdDatastore({
+      name: req.params.adName,
+      data: { translatedText: translatedText },
+    });
     res.status(200);
     res.json(translatedText);
   } catch (error) {
