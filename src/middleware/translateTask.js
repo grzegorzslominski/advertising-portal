@@ -4,7 +4,7 @@ const client = new CloudTasksClient();
 
 async function translateAdDescriptionTask(payload) {
   const project = process.env.GCLOUD_PROJECT_ID;
-  const queue = process.env.QUEUE;
+  const queue = process.env.TRANSLATION_QUEUQ;
   const location = process.env.LOCATION;
 
   inSeconds = 1;

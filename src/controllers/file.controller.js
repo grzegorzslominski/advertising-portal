@@ -39,7 +39,7 @@ const upload = async (req, res) => {
         });
       } catch {
         return res.status(500).send({
-          message: `Uploaded the file successfully: ${req.file.originalname}, but public access is denied!`,
+          message: `Uploaded the file successfully: ${req.file.originalname}, but image recognize is failed`,
           url: publicUrl,
         });
       }
