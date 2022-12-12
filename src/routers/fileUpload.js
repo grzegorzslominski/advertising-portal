@@ -11,7 +11,6 @@ const {
 router.post("/upload/:adName", upload);
 router.get("/files", getListFiles);
 router.get("/files/:name", download);
-
 router.post("/recognize/:adName", recognizeLabels);
 
 module.exports = router;

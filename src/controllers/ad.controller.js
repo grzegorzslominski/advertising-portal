@@ -1,14 +1,21 @@
+const { PubSub, v1 } = require("@google-cloud/pubsub");
+const pubSubClient = new PubSub();
+const pubSubClient2 = new v1.PublisherClient();
+const topicName = "translation";
+
+const pubsubRepository = require("../repositories/pubSubRepo");
+const { listenForPullMessages, listenForPushMessages, publishMessage } =
+  pubsubRepository;
+
 const {
   getAdsDatastore,
   getAdByNameDatastore,
   createAdDatastore,
   updateAdDatastore,
   deleteAdDatastore,
-} = require("../services/ad/ad");
+} = require("../services/ad/adService");
 
-const { translateText } = require("../services/ad/translateService");
-const { targetLanguages } = require("../config/database/translate");
-const { translateAdDescriptionTask } = require("../middleware/translateTask");
+// const { translateAdDescriptionTask } = require("../middleware/translateTask");
 
 const getAds = async (req, res) => {
   try {
@@ -35,19 +42,26 @@ const getAdByName = async (req, res) => {
 
 const createAd = async (req, res) => {
   try {
-    await Promise.all([
-      createAdDatastore(req.body),
-      translateAdDescriptionTask({
-        adName: req.body.name,
-        description: req.body.description,
-      }),
-    ]);
-    res.send("Created ad");
-    res.status(201);
+    await createAdDatastore(req.body);
+    const translationObj = {
+      adName: req.body.name,
+      description: req.body.description,
+    };
+    const messageId = await publishMessage(
+      pubSubClient,
+      topicName,
+      translationObj
+    );
+
+    return res.status(201).send({
+      message: `The advertisement has been added and the description has been sent for translation. MessageID: ${messageId} `,
+    });
   } catch (error) {
     console.log(error);
-    res.send("New advertisement could not be added");
-    res.status(500);
+    return res.status(500).json({
+      success: true,
+      message: "New advertisement could not be added",
+    });
   }
 };
 
@@ -73,29 +87,10 @@ const deleteAd = async (req, res) => {
   }
 };
 
-const translateDescription = async (req, res) => {
-  try {
-    const translatedText = await translateText(
-      req.body.description,
-      targetLanguages
-    );
-    await updateAdDatastore({
-      name: req.params.adName,
-      data: { translatedText: translatedText },
-    });
-    res.status(200);
-    res.json(translatedText);
-  } catch (error) {
-    res.send("Failed to translate text");
-    res.status(500);
-  }
-};
-
 module.exports = {
   getAds,
   getAdByName,
   createAd,
   updateAd,
   deleteAd,
-  translateDescription,
 };

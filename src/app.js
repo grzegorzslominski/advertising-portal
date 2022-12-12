@@ -7,15 +7,17 @@ let corsOptions = {
   origin: "http://localhost:8081",
 };
 
-const adRoutes = require("./routers/adRouter.js");
-const uploadRoutes = require("./routers/uploadRouter");
+const ad = require("./routers/ad");
+const fileUpload = require("./routers/fileUpload");
+const translation = require("./routers/translation");
 
 const app = express();
 app.use(cors(corsOptions));
 app.use(bodyParser.json());
 
-app.use("/ad", adRoutes);
-app.use("/image", uploadRoutes);
+app.use("/ad", ad);
+app.use("/image", fileUpload);
+app.use("/translation", translation);
 
 const PORT = process.env.PORT || 8080;
 app.listen(PORT, () => {

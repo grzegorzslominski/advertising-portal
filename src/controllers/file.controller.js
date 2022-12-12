@@ -7,7 +7,7 @@ const {
 const {
   recognizeImageLabelsTask,
 } = require("../middleware/recognizeImageTask");
-const { updateAdDatastore } = require("../services/ad/ad");
+const { updateAdDatastore } = require("../services/ad/adService");
 
 const upload = async (req, res) => {
   try {
