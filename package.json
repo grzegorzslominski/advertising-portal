@@ -12,6 +12,7 @@
   "license": "ISC",
   "dependencies": {
     "@google-cloud/datastore": "^7.0.0",
+    "@google-cloud/pubsub": "^3.2.1",
     "@google-cloud/storage": "^6.7.0",
     "@google-cloud/tasks": "^3.0.5",
     "@google-cloud/translate": "^7.0.4",

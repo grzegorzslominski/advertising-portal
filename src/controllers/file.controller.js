@@ -102,7 +102,6 @@ const download = async (req, res) => {
 const recognizeLabels = async (req, res) => {
   try {
     const labels = await recognizeImageLabels(req.body.fileName);
-    console.log(labels);
     await updateAdDatastore({
       name: req.params.adName,
       data: { imageLabels: labels },

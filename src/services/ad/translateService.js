@@ -1,7 +1,6 @@
 const { translate } = require("../../config/database/translate");
 
 const translateText = async (text, targetLanguages) => {
-  console.log('test translate');
   try {
     const promises = [];
 

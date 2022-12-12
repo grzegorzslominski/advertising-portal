@@ -5,28 +5,9 @@ const timeout = 60;
 const pubsubRepository = require("../repositories/pubSubRepo");
 const { listenForPullMessages, listenForPushMessages } = pubsubRepository;
 
-// const { updateAdDatastore } = require("../services/ad/ad");
-
-// const { translateText } = require("../services/ad/translateService");
-// const { targetLanguages } = require("../config/database/translate");
-
-// const translateDescription = async (req, res) => {
-//   try {
-//     const translatedText = await translateText(
-//       req.body.description,
-//       targetLanguages
-//     );
-//     await updateAdDatastore({
-//       name: req.params.adName,
-//       data: { translatedText: translatedText },
-//     });
-//     res.status(200);
-//     res.json(translatedText);
-//   } catch (error) {
-//     res.send("Failed to translate text");
-//     res.status(500);
-//   }
-// };
+const { updateAdDatastore } = require("../services/ad/adService");
+const { translateText } = require("../services/ad/translateService");
+const { targetLanguages } = require("../config/database/translate");
 
 const pullTranslation = (req, res) => {
   try {
@@ -34,7 +15,7 @@ const pullTranslation = (req, res) => {
   } catch (error) {
     return res.status(500).json({
       success: false,
-      message: "Couldn't receive orders object :(",
+      message: "Couldn't receive ad object",
       data: error,
     });
   }

@@ -4,8 +4,7 @@ const pubSubClient2 = new v1.PublisherClient();
 const topicName = "translation";
 
 const pubsubRepository = require("../repositories/pubSubRepo");
-const { listenForPullMessages, listenForPushMessages, publishMessage } =
-  pubsubRepository;
+const { publishMessage } = pubsubRepository;
 
 const {
   getAdsDatastore,
@@ -14,8 +13,6 @@ const {
   updateAdDatastore,
   deleteAdDatastore,
 } = require("../services/ad/adService");
-
-// const { translateAdDescriptionTask } = require("../middleware/translateTask");
 
 const getAds = async (req, res) => {
   try {
