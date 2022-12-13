@@ -1,7 +1,6 @@
 const { PubSub, v1 } = require("@google-cloud/pubsub");
 const pubSubClient = new PubSub();
 const pubSubClient2 = new v1.PublisherClient();
-const topicName = "translation";
 
 const pubsubRepository = require("../repositories/pubSubRepo");
 const { publishMessage } = pubsubRepository;
@@ -40,18 +39,19 @@ const getAdByName = async (req, res) => {
 const createAd = async (req, res) => {
   try {
     await createAdDatastore(req.body);
-    const translationObj = {
+    const translationData = {
       adName: req.body.name,
       description: req.body.description,
     };
-    const messageId = await publishMessage(
+    await publishMessage(
       pubSubClient,
-      topicName,
-      translationObj
+      process.env.TRANSLATION_TOPIC,
+      translationData
     );
 
     return res.status(201).send({
-      message: `The advertisement has been added and the description has been sent for translation. MessageID: ${messageId} `,
+      message:
+        "The advertisement has been added and the description has been sent for translation",
     });
   } catch (error) {
     console.log(error);

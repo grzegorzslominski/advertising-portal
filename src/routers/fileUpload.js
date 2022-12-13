@@ -5,12 +5,12 @@ const {
   upload,
   getListFiles,
   download,
-  recognizeLabels,
-} = require("../controllers/file.controller");
+  pushImageRecognize,
+} = require("../controllers/fileUpload.controller");
 
 router.post("/upload/:adName", upload);
 router.get("/files", getListFiles);
 router.get("/files/:name", download);
-router.post("/recognize/:adName", recognizeLabels);
+router.post("/recognize/push", pushImageRecognize);
 
 module.exports = router;
