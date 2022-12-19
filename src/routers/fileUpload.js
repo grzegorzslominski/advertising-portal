@@ -11,6 +11,6 @@ const {
 router.post("/upload/:adName", upload);
 router.get("/files", getListFiles);
 router.get("/files/:name", download);
-router.post("/recognize/push", pushImageRecognize);
+router.post("/recognize", pushImageRecognize);
 
 module.exports = router;

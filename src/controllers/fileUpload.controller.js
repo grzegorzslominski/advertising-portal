@@ -7,7 +7,10 @@ const {
   recognizeImageLabels,
 } = require("../services/image/recognizeImageService");
 const { updateAdDatastore } = require("../services/ad/adService");
-const { publishMessage } = require("../repositories/pubSubRepo");
+const {
+  publishMessage,
+  listenForPushMessages,
+} = require("../repositories/pubSubRepo");
 
 const upload = async (req, res) => {
   try {
@@ -128,6 +131,29 @@ const pushImageRecognize = async (req, res) => {
     });
   }
 };
+
+// const pushImageRecognize = async (req, res) => {
+//   try {
+//     let messageResponse = await listenForPushMessages(req.body.message.data);
+//     const [files] = await bucket.getFiles();
+//     let fileInfos = [];
+
+//     files.forEach((file) => {
+//       fileInfos.push({
+//         name: file.name,
+//         url: file.metadata.mediaLink,
+//       });
+//     });
+
+//     res.status(200).send(fileInfos);
+//   } catch (err) {
+//     console.log(err);
+
+//     res.status(500).send({
+//       message: "Unable to read list of files!",
+//     });
+//   }
+// };
 
 module.exports = {
   upload,

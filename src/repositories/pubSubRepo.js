@@ -29,10 +29,9 @@ module.exports = {
   },
 
   listenForPushMessages: (payload) => {
+    console.log(payload);
     const message = Buffer.from(payload, "base64").toString("utf-8");
     let parsedMessage = JSON.parse(message);
-    console.log(parsedMessage);
-
     return parsedMessage;
   },
 };
