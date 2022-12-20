@@ -1,10 +1,8 @@
 module.exports = {
   publishMessage: async (pubSubClient, topicName, payload) => {
-    console.log(payload);
     const dataBuffer = Buffer.from(JSON.stringify(payload));
 
     const messageId = await pubSubClient.topic(topicName).publish(dataBuffer);
-    console.log(`Message ${messageId} published.`);
     return messageId;
   },
 
@@ -13,9 +11,9 @@ module.exports = {
 
     let messageCount = 0;
     const messageHandler = (message) => {
-      console.log(`Received message ${message.id}:`);
-      console.log(`\tData: ${message.data}`);
-      console.log(`\tAttributes: ${message.attributes}`);
+      // console.log(`Received message ${message.id}:`);
+      // console.log(`\tData: ${message.data}`);
+      // console.log(`\tAttributes: ${message.attributes}`);
       messageCount += 1;
 
       message.ack();
@@ -25,12 +23,10 @@ module.exports = {
 
     setTimeout(() => {
       subscription.removeListener("message", messageHandler);
-      console.log(`${messageCount} message(s) received.`);
     }, timeout * 1000);
   },
 
   listenForPushMessages: (payload) => {
-    console.log(payload);
     const message = Buffer.from(payload, "base64").toString("utf-8");
     let parsedMessage = JSON.parse(message);
     return parsedMessage;

@@ -68,11 +68,15 @@ async function createAdDatastore(adData) {
 }
 
 async function updateAdDatastore(adData) {
-  const ad = await getAdByNameDatastore(adData.name);
+  let ad = await getAdByNameDatastore(adData.name);
 
   Object.keys(adData.data).map((key) => {
     ad[key] = adData.data[key];
   });
+
+  if(adData.translationDate){
+    ad.translationDate = adData.translationDate;
+  }
 
   await datastore.save(ad);
 }

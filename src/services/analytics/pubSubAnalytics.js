@@ -18,4 +18,29 @@ const publishAdDataToAnalysis = (adData) => {
   );
 };
 
-module.exports = { publishAdDataToAnalysis };
+const findTextInLanguage =  (translationData, language = 'en') => {
+  return translationData.find((text) => text.language === language).data;
+}
+    
+const publishTranslationDataToAnalysis = (translationData) => {
+  const translationDataToAnalysis = {
+    adName: translationData.adName,
+    date: translationData.date,
+    enText: findTextInLanguage(translationData.translation, 'en'),
+    plText: findTextInLanguage(translationData.translation, 'pl'),
+    deText: findTextInLanguage(translationData.translation, 'de'),
+  }
+
+  publishMessage(
+    pubSubClient,
+    process.env.TRANSLATION_ANALYTICS_TOPIC,
+    translationDataToAnalysis
+  );
+    
+}
+
+const publishImageDataToAnalysis = () => {
+  
+}
+
+module.exports = { publishAdDataToAnalysis, publishTranslationDataToAnalysis, publishImageDataToAnalysis };
