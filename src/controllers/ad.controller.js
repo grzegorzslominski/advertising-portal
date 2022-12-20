@@ -4,6 +4,9 @@ const pubSubClient2 = new v1.PublisherClient();
 
 const pubsubRepository = require("../repositories/pubSubRepo");
 const { publishMessage } = pubsubRepository;
+const {
+  publishAdDataToAnalysis,
+} = require("../services/analytics/pubSubAnalytics");
 
 const {
   getAdsDatastore,
@@ -38,7 +41,8 @@ const getAdByName = async (req, res) => {
 
 const createAd = async (req, res) => {
   try {
-    await createAdDatastore(req.body);
+    const newAd = await createAdDatastore(req.body);
+
     const translationData = {
       adName: req.body.name,
       description: req.body.description,
@@ -48,6 +52,8 @@ const createAd = async (req, res) => {
       process.env.TRANSLATION_TOPIC,
       translationData
     );
+
+    publishAdDataToAnalysis(newAd.data);
 
     return res.status(201).send({
       message:
